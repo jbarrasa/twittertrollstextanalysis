@@ -1,12 +1,12 @@
-// Create index on words to accelerate merges
+// STEP 1: Create index on words to accelerate merges
 
 CREATE INDEX ON :Word(text)
 
 
 
 
-// Extracts words from the text in a tweet (excludes stopwords, hashtags, urls, etc) and creates word as nodes
-// linked to the tweets through the :CONTAINS_WORD relationship
+// STEP 2: Extracts words from the text in a tweet (excludes stopwords, hashtags, urls, etc) 
+// and creates word as nodes linked to the tweets through the :CONTAINS_WORD relationship
 // stopword list taken from here: https://www.ranks.nl/stopwords
 // (takes under 2 minutes in the sandbox)
 
@@ -27,7 +27,8 @@ RETURN COUNT(n)
 
 
 
-// Mark words that appear at least 200 times as :HiFreqWord (we limit it so it can be run in a Sandbox)
+// STEP 3: Mark words that appear at least 200 times as :HiFreqWord 
+// (we limit it so it can be run in a Sandbox)
 
 MATCH (w:Word) 
 WHERE size((w)<-[:CONTAINS_WORD]-()) > 200 
@@ -36,7 +37,7 @@ SET w:HiFreqWord
 
 
 
-// Create CO-OCCURENCE relationships between HiFreqWords with weight = number of times they appear together
+// STEP 4: Create CO-OCCURENCE relationships between HiFreqWords with weight = number of times they appear together
 // (takes under 10 seconds in the sandbox)
 
 MATCH (w1:HiFreqWord)<-[:CONTAINS_WORD]-(t)-[:CONTAINS_WORD]->(w2:HiFreqWord)
